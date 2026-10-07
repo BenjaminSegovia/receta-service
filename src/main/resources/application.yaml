@@ -1,3 +1,28 @@
 spring:
   application:
     name: receta-service
+
+  # Conexión a PostgreSQL.
+  # Cada valor usa el formato ${VARIABLE_DE_ENTORNO:valor_por_defecto},
+  # así el servicio corre en local sin tocar el archivo y en producción
+  # solo se define la variable (nunca se commitean credenciales reales).
+  datasource:
+    url: "${DB_URL:jdbc:postgresql://localhost:5432/receta_db}"
+    username: "${DB_USERNAME:postgres}"
+    password: "${DB_PASSWORD:postgrespassword}"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    # No se usa sesión JPA fuera de la transacción (el servicio no tiene
+    # relaciones lazy): evita el warning "open-in-view is enabled by default".
+    open-in-view: false
+
+# Actuator: qué endpoints de operación se publican por HTTP
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
